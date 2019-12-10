@@ -16,11 +16,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
       
-      let vc = ViewController(persistenceManager: PersistenceManager.shared);
+      let vc = RootViewController(persistenceManager: PersistenceManager.shared);
+      //use the root view controller as index page
+      let navController = UINavigationController(rootViewController: vc)
       window = UIWindow(frame: UIScreen.main.bounds)
-      window?.rootViewController = vc;
+      window?.rootViewController = navController;
       window?.makeKeyAndVisible();
       
         return true
     }
+  
 }
