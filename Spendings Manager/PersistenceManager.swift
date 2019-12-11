@@ -72,5 +72,10 @@ final class PersistenceManager {
          return [T]()
       }
     }
+  
+  func delete(_ object: NSManagedObject) {
+    context.delete(object)
+    save();
+  }
 
   }

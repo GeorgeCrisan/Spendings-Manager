@@ -12,6 +12,8 @@ class RootViewController: UIViewController {
  
   let persistenceManager: PersistenceManager
   
+  var budgets = [Budget]();
+  
   init (persistenceManager: PersistenceManager) {
     self.persistenceManager = persistenceManager
     super.init(nibName: nil, bundle: nil)
@@ -24,17 +26,18 @@ class RootViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-      createBudget();
       view.backgroundColor = .blue
-      setupAddBudget()
+      setupAddBudgetButton()
       getBudget();
-      //print("George is up")
+      //createBudget();
+      updateBudget();
+      
       
     }
   //First Page Layout
   let addBudget = UIButton();
   
-  func setupAddBudget() {
+  func setupAddBudgetButton() {
     addBudget.backgroundColor = .black;
     addBudget.showsTouchWhenHighlighted = true;
     addBudget.setTitleColor(.white, for: .normal)
@@ -62,6 +65,15 @@ class RootViewController: UIViewController {
   }
   
   
+  //Utils
+  func showBudgets(withDelete: Bool  = false) {
+    budgets.forEach({ print($0.title , $0.total, $0.created) });
+    if(withDelete) {
+      print(" with delete ");
+      budgets.forEach({ deleteBudget(budget: $0) })
+    }
+  }
+  
   
   
   //CRUD methods
@@ -70,15 +82,37 @@ class RootViewController: UIViewController {
 
     budget.created = Date()
     budget.id = UUID();
-    budget.title = "Demo Budget 2"
+    budget.title = "Test"
     budget.total = 0
     persistenceManager.save()
     
   }
   
+  func updateBudget() {
+    let firstBudget = budgets.first!
+    
+    if(firstBudget.total > -1) {
+      firstBudget.total += 1000
+      
+      persistenceManager.save()
+      print("show after update", firstBudget.total);
+    }
+  }
+  
+  func deleteBudget(budget: Budget) {
+    
+    persistenceManager.context.delete(budget);
+    do {
+      try persistenceManager.context.save();
+    } catch {
+    print("error from delete");
+    }
+  }
+  
   func getBudget() {
     let budgets = persistenceManager.fetch(Budget.self)
-    budgets.forEach({ print($0.title, $0.created) })
+    self.budgets = budgets;
+    showBudgets(withDelete: false)
   }
 }
 
